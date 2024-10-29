@@ -1704,7 +1704,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                     <div className="col-6">
                       <div className="d-flex flex-column w-100">
                         <span className="h3 text-end">
-                          Date: {getPhilippinesTime()}
+                          Date Issued:{" "}
+                          {ApprovedIssue[0].issuance.date_issued === null
+                            ? "--"
+                            : ApprovedIssue[0].issuance.date_issued}
                         </span>
                         <span className="h3 text-end">
                           Date Approved:{" "}

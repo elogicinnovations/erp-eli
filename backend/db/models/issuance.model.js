@@ -1,7 +1,7 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const Issuance = sequelize.define('issuance', {
+const Issuance = sequelize.define("issuance", {
   issuance_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -11,11 +11,11 @@ const Issuance = sequelize.define('issuance', {
   from_site: {
     type: DataTypes.INTEGER,
     allowNull: true,
-  }, 
+  },
   issued_to: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    unique: false
+    unique: false,
   },
   with_accountability: {
     type: DataTypes.STRING,
@@ -39,7 +39,7 @@ const Issuance = sequelize.define('issuance', {
   },
   transported_by: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
   },
   mrs: {
     type: DataTypes.STRING,
@@ -49,24 +49,26 @@ const Issuance = sequelize.define('issuance', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  status:{
+  status: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   date_approved: {
     type: DataTypes.DATE,
-    allowNull: true
+    allowNull: true,
   },
   issued_by: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
   },
   approved_by: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
   },
-
-
+  date_issued: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
 });
 
 module.exports = Issuance;

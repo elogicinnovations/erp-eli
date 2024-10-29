@@ -38,6 +38,8 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   const [remarks, setRemarks] = useState();
   const [IssueStatus, setIssueStatus] = useState();
   const [userId, setuserId] = useState("");
+  const [date_issued, setDateIssued] = useState("");
+  const [date_issued_to_set, setDateIssuedToSet] = useState(""); //for set date issued
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -53,8 +55,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   }, []);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
+  const reloadData = () => {
     const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/issuance/approvalIssuance", {
@@ -75,6 +76,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
           setMrs(res.data[0].mrs);
           setRemarks(res.data[0].remarks);
           setIssueStatus(res.data[0].status);
+          setDateIssued(res.data[0].date_issued);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -84,6 +86,10 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
     }, 1000);
 
     return () => clearTimeout(delay);
+  };
+
+  useEffect(() => {
+    reloadData();
   }, [id]);
 
   //get MasterList
@@ -182,6 +188,44 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
     });
   };
 
+  const handleUpdateDateIssued = () => {
+    if (date_issued_to_set === "") {
+      swal({
+        title: "Oops!",
+        text: "Please set the date issued first.",
+        icon: "warning",
+        buttons: false,
+        timer: 2000,
+      });
+      return;
+    }
+
+    swal({
+      title: "Are you sure?",
+      text: "This action will set the date issued.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((confirmed) => {
+      if (confirmed) {
+        axios
+          .post(BASE_URL + "/issuance/updateDateIssued", null, {
+            params: { id, date_issued_to_set },
+          })
+          .then(() => {
+            swal({
+              title: "Success",
+              text: "You have successfully set the date issued.",
+              icon: "success",
+              buttons: false,
+              timer: 2000,
+            });
+            reloadData();
+          });
+      }
+    });
+  };
+
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -221,6 +265,47 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                   transform: "translateY(-50%)",
                 }}
               ></span>
+            </div>
+            <div className="row mt-3">
+              <div className="col-sm">
+                {date_issued === null ? (
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Date Issued:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={date_issued_to_set}
+                      required
+                      onChange={(e) => setDateIssuedToSet(e.target.value)}
+                    />
+                  </Form.Group>
+                ) : (
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Date Issued:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={date_issued}
+                      readOnly
+                      required
+                      onChange={(e) => setDateIssued(e.target.value)}
+                    />
+                  </Form.Group>
+                )}
+
+                {date_issued === null && (
+                  <Button
+                    variant="primary"
+                    onClick={() => handleUpdateDateIssued()}
+                  >
+                    Set Date Issued
+                  </Button>
+                )}
+              </div>
+
+              <div className="col-sm"></div>
             </div>
 
             <div className="row mt-3">

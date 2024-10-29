@@ -437,6 +437,7 @@ router.route("/create").post(async (req, res) => {
       mrs: req.body.mrs,
       remarks: req.body.remarks,
       status: "Pending",
+      date_issued: req.body.date_issued,
       issued_by: req.body.userId,
     });
 
@@ -586,6 +587,15 @@ router.route("/fetchPreview").get(async (req, res) => {
     console.error(err);
     res.status(500).json("Error");
   }
+});
+
+router.route("/updateDateIssued").post(async (req, res) => {
+  const { id, date_issued_to_set } = req.query;
+  await Issuance.update(
+    { date_issued: date_issued_to_set },
+    { where: { issuance_id: id } }
+  );
+  res.status(200).json();
 });
 
 module.exports = router;

@@ -17,8 +17,7 @@ const Product_Assembly = require("./product_assembly.model");
 const Product_image = require("./product_image.model");
 const Product_Assm = require("./product_assm.model");
 const Product_Sub_Assembly = require("./product_sub_assembly.model");
-const Product_Spare_Parts = require("./product_spareparts.model")
-
+const Product_Spare_Parts = require("./product_spareparts.model");
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model");
@@ -42,7 +41,7 @@ const Inventory = require("./inventory.model");
 const Inventory_Assembly = require("./inventory_assembly.model");
 const Inventory_Spare = require("./inventory_spare.model");
 const Inventory_Subpart = require("./inventory_subpart.model");
-const Accountability = require("./accountability.model")
+const Accountability = require("./accountability.model");
 const Issuance = require("./issuance.model");
 const IssuedProduct = require("./issued_product.model");
 const IssuedAssembly = require("./issued_assembly.model");
@@ -74,7 +73,6 @@ const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
 const PO_Received = require("./po_received.model");
 
-
 const Receiving_PO = require("./receiving.model");
 const Receiving_Prd = require("./receiving_prd.model");
 const Receiving_Asm = require("./receiving_asm.model");
@@ -82,14 +80,14 @@ const Receiving_Spare = require("./receiving_spare.model");
 const Receiving_Subpart = require("./receiving_subpart.model");
 const Receiving_Image = require("./receiving_picture.model");
 
-const Receiving_initial_prd = require("./receiving_initial_prd.model")
-const Receiving_initial_asm = require("./receiving_initial_asm.model")
-const Receiving_initial_spare = require("./receiving_initial_spare.model")
-const Receiving_initial_subpart = require("./receiving_initial_subpart.model")
+const Receiving_initial_prd = require("./receiving_initial_prd.model");
+const Receiving_initial_asm = require("./receiving_initial_asm.model");
+const Receiving_initial_spare = require("./receiving_initial_spare.model");
+const Receiving_initial_subpart = require("./receiving_initial_subpart.model");
 
 const StockTransfer = require("./stockTransfer.model");
-const Stock_Rejustify = require("./stockTransfer_rejustify.model")
-const Stock_History = require("./stockTransfer_history.model")
+const Stock_Rejustify = require("./stockTransfer_rejustify.model");
+const Stock_History = require("./stockTransfer_history.model");
 const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
@@ -97,10 +95,10 @@ const StockTransfer_subpart = require("./stockTransfer_subpart.model");
 const ST_REJECT = require("./stockTransfer_reject.model");
 
 const Warehouses = require("./warehouse.model");
-const Board = require("./board.model")
-const Board_to = require("./board_to.model")
-const Board_pic = require("./board_picture.model")
-const Board_reply = require("./board_reply.model")
+const Board = require("./board.model");
+const Board_to = require("./board_to.model");
+const Board_pic = require("./board_picture.model");
+const Board_reply = require("./board_reply.model");
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -108,8 +106,12 @@ const Board_reply = require("./board_reply.model")
 UserRole.hasMany(MasterList, { foreignKey: "col_roleID" });
 MasterList.belongsTo(UserRole, { foreignKey: "col_roleID" });
 
-IssuedApproveProduct.hasMany(Accountability, {foreignKey: "issued_approve_prd_id"});
-Accountability.belongsTo(IssuedApproveProduct, {foreignKey: "issued_approve_prd_id"});
+IssuedApproveProduct.hasMany(Accountability, {
+  foreignKey: "issued_approve_prd_id",
+});
+Accountability.belongsTo(IssuedApproveProduct, {
+  foreignKey: "issued_approve_prd_id",
+});
 
 // MasterList.hasMany(Accountability, { foreignKey: "masterlist_id" });
 // Accountability.belongsTo(MasterList, { foreignKey: "masterlist_id" });
@@ -137,20 +139,20 @@ Supplier.hasMany(Subpart_supplier, { foreignKey: "supplier_code" });
 Subpart_supplier.belongsTo(Supplier, { foreignKey: "supplier_code" });
 
 //subpart tag in bin location
-BinLocation.hasMany(SubPart, { foreignKey: "bin_id" });
-SubPart.belongsTo(BinLocation, { foreignKey: "bin_id" });
+// BinLocation.hasMany(SubPart, { foreignKey: "bin_id" });
+// SubPart.belongsTo(BinLocation, { foreignKey: "bin_id" });
 
 //subpart tag in manufacturer
-Manufacturer.hasMany(SubPart, { foreignKey: "subPart_Manufacturer" });
-SubPart.belongsTo(Manufacturer, { foreignKey: "subPart_Manufacturer" });
+// Manufacturer.hasMany(SubPart, { foreignKey: "subPart_Manufacturer" });
+// SubPart.belongsTo(Manufacturer, { foreignKey: "subPart_Manufacturer" });
 
 //subpart tag category
-Category.hasMany(SubPart, { foreignKey: "category_code" });
-SubPart.belongsTo(Category, { foreignKey: "category_code" });
+// Category.hasMany(SubPart, { foreignKey: "category_code" });
+// SubPart.belongsTo(Category, { foreignKey: "category_code" });
 
 //subpart tag image
-SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id" });
-Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id" });
+// SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id" });
+// Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id" });
 
 //subpart price history table
 SubPart.hasMany(Subpart_Price_History, { foreignKey: "subpart_id" });
@@ -173,8 +175,8 @@ Product_Assembly.belongsTo(Product, { foreignKey: "product_id" });
 Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id" });
 Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id" });
 
-Assembly.hasMany(Assembly_image, { foreignKey: "assembly_id" });
-Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id" });
+// Assembly.hasMany(Assembly_image, { foreignKey: "assembly_id" });
+// Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id" });
 
 Product.hasMany(Product_image, { foreignKey: "product_id" });
 Product_image.belongsTo(Product, { foreignKey: "product_id" });
@@ -183,22 +185,52 @@ Product_image.belongsTo(Product, { foreignKey: "product_id" });
 Product.hasMany(Product_Assm, { foreignKey: "product_id", as: "product" });
 Product_Assm.belongsTo(Product, { foreignKey: "product_id", as: "product" });
 
-Product.hasMany(Product_Assm, { foreignKey: "tag_product_assm", as: "tagged_product_assemblies" });
-Product_Assm.belongsTo(Product, { foreignKey: "tag_product_assm", as: "tagged_product_assemblies" });
+Product.hasMany(Product_Assm, {
+  foreignKey: "tag_product_assm",
+  as: "tagged_product_assemblies",
+});
+Product_Assm.belongsTo(Product, {
+  foreignKey: "tag_product_assm",
+  as: "tagged_product_assemblies",
+});
 
 //product type sub assembly
-Product.hasMany(Product_Sub_Assembly, { foreignKey: "product_id", as: "productIncremented" }); //Product ID
-Product_Sub_Assembly.belongsTo(Product, { foreignKey: "product_id", as: "productIncremented" });
+Product.hasMany(Product_Sub_Assembly, {
+  foreignKey: "product_id",
+  as: "productIncremented",
+}); //Product ID
+Product_Sub_Assembly.belongsTo(Product, {
+  foreignKey: "product_id",
+  as: "productIncremented",
+});
 
-Product.hasMany(Product_Sub_Assembly, { foreignKey: "tag_product_sub_assembly", as: "tag_sub_assemblies"  }); // Tag product sub assembly
-Product_Sub_Assembly.belongsTo(Product, { foreignKey: "tag_product_sub_assembly", as: "tag_sub_assemblies"  });
+Product.hasMany(Product_Sub_Assembly, {
+  foreignKey: "tag_product_sub_assembly",
+  as: "tag_sub_assemblies",
+}); // Tag product sub assembly
+Product_Sub_Assembly.belongsTo(Product, {
+  foreignKey: "tag_product_sub_assembly",
+  as: "tag_sub_assemblies",
+});
 
 //product type spare parts
-Product.hasMany(Product_Spare_Parts, { foreignKey: "product_id", as: "IncrementedProduct" }); //Product ID
-Product_Spare_Parts.belongsTo(Product, { foreignKey: "product_id", as: "IncrementedProduct" });
+Product.hasMany(Product_Spare_Parts, {
+  foreignKey: "product_id",
+  as: "IncrementedProduct",
+}); //Product ID
+Product_Spare_Parts.belongsTo(Product, {
+  foreignKey: "product_id",
+  as: "IncrementedProduct",
+});
 
-Product.hasMany(Product_Spare_Parts, { foreignKey: "tag_product_spare_parts", as: "tag_product_spares" }); 
-Product_Spare_Parts.belongsTo(Product, { foreignKey: "tag_product_spare_parts", as: "tag_product_spares" }); // Tag product Spare Parts
+Product.hasMany(Product_Spare_Parts, {
+  foreignKey: "tag_product_spare_parts",
+  as: "tag_product_spares",
+});
+Product_Spare_Parts.belongsTo(Product, {
+  foreignKey: "tag_product_spare_parts",
+  as: "tag_product_spares",
+}); // Tag product Spare Parts
 
 Product.hasMany(PR_product, { foreignKey: "product_id" });
 PR_product.belongsTo(Product, { foreignKey: "product_id" });
@@ -206,24 +238,32 @@ PR_product.belongsTo(Product, { foreignKey: "product_id" });
 PR.hasMany(PR_product, { foreignKey: "pr_id" });
 PR_product.belongsTo(PR, { foreignKey: "pr_id" });
 
-Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id" });
-PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id" });
+// Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id" });
+// PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id" });
 
-SparePart.hasMany(PR_sparePart, { foreignKey: "spare_id" });
-PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id" });
+// SparePart.hasMany(PR_sparePart, { foreignKey: "spare_id" });
+// PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id" });
 
-SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id" });
-PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id" });
+// SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id" });
+// PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id" });
 
+Warehouses.hasMany(StockTransfer, {
+  foreignKey: "destination",
+  as: "DestinationWarehouse",
+});
+StockTransfer.belongsTo(Warehouses, {
+  foreignKey: "destination",
+  as: "DestinationWarehouse",
+});
 
-Warehouses.hasMany(StockTransfer, { foreignKey: "destination", as: "DestinationWarehouse" });
-StockTransfer.belongsTo(Warehouses, { foreignKey: "destination", as: "DestinationWarehouse" });
-
-Warehouses.hasMany(StockTransfer, { foreignKey: "source", as: "SourceWarehouse" });
-StockTransfer.belongsTo(Warehouses, { foreignKey: "source", as: "SourceWarehouse" });
-
-
-
+Warehouses.hasMany(StockTransfer, {
+  foreignKey: "source",
+  as: "SourceWarehouse",
+});
+StockTransfer.belongsTo(Warehouses, {
+  foreignKey: "source",
+  as: "SourceWarehouse",
+});
 
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id" });
@@ -240,8 +280,8 @@ SubPart.hasMany(Product_Subparts, { foreignKey: "subPart_id" });
 Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id" });
 
 //Sparepart image
-SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id" });
-SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id" });
+// SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id" });
+// SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id" });
 
 // product price history table
 Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
@@ -303,8 +343,8 @@ IssuedProduct.belongsTo(Product, { foreignKey: "product_id" });
 Issuance.hasMany(IssuedAssembly, { foreignKey: "issuance_id" });
 IssuedAssembly.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Assembly.hasMany(IssuedAssembly, {foreignKey: "product_id",});
-IssuedAssembly.belongsTo(Assembly, {foreignKey: "product_id"});
+Assembly.hasMany(IssuedAssembly, { foreignKey: "product_id" });
+IssuedAssembly.belongsTo(Assembly, { foreignKey: "product_id" });
 
 //issuance spare table
 Issuance.hasMany(IssuedSpare, { foreignKey: "issuance_id" });
@@ -317,9 +357,8 @@ IssuedSpare.belongsTo(SparePart, { foreignKey: "product_id" });
 Issuance.hasMany(IssuedSubpart, { foreignKey: "issuance_id" });
 IssuedSubpart.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-SubPart.hasMany(IssuedSubpart, {foreignKey: "product_id",});
-IssuedSubpart.belongsTo(SubPart, {foreignKey: "product_id",});
-
+SubPart.hasMany(IssuedSubpart, { foreignKey: "product_id" });
+IssuedSubpart.belongsTo(SubPart, { foreignKey: "product_id" });
 
 // IF iSSUANCE is approved prd
 Issuance.hasMany(IssuedApproveProduct, { foreignKey: "issuance_id" });
@@ -332,9 +371,12 @@ IssuedApproveProduct.belongsTo(Inventory, { foreignKey: "inventory_id" });
 Issuance.hasMany(IssuedApproveAssembly, { foreignKey: "issuance_id" });
 IssuedApproveAssembly.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Inventory_Assembly.hasMany(IssuedApproveAssembly, { foreignKey: "inventory_id" });
-IssuedApproveAssembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id" });
-
+Inventory_Assembly.hasMany(IssuedApproveAssembly, {
+  foreignKey: "inventory_id",
+});
+IssuedApproveAssembly.belongsTo(Inventory_Assembly, {
+  foreignKey: "inventory_id",
+});
 
 // IF iSSUANCE is approved spare
 Issuance.hasMany(IssuedApproveSpare, { foreignKey: "issuance_id" });
@@ -348,8 +390,9 @@ Issuance.hasMany(IssuedApproveSubpart, { foreignKey: "issuance_id" });
 IssuedApproveSubpart.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
 Inventory_Subpart.hasMany(IssuedApproveSubpart, { foreignKey: "inventory_id" });
-IssuedApproveSubpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_id" });
-
+IssuedApproveSubpart.belongsTo(Inventory_Subpart, {
+  foreignKey: "inventory_id",
+});
 
 //Issuance Return tab for product
 Inventory.hasMany(IssuedReturn, { foreignKey: "inventory_id" });
@@ -359,10 +402,16 @@ Issuance.hasMany(IssuedReturn, { foreignKey: "issued_id" });
 IssuedReturn.belongsTo(Issuance, { foreignKey: "issued_id" });
 
 MasterList.hasMany(IssuedReturn, { foreignKey: "return_by", as: "returnedBy" });
-IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by", as: "returnedBy" });
+IssuedReturn.belongsTo(MasterList, {
+  foreignKey: "return_by",
+  as: "returnedBy",
+});
 
 MasterList.hasMany(IssuedReturn, { foreignKey: "retained_by", as: "retainee" });
-IssuedReturn.belongsTo(MasterList, { foreignKey: "retained_by", as: "retainee" });
+IssuedReturn.belongsTo(MasterList, {
+  foreignKey: "retained_by",
+  as: "retainee",
+});
 
 //Issuance Return tab for Assmebly
 Inventory_Assembly.hasMany(IssuedReturn_asm, { foreignKey: "inventory_id" });
@@ -410,11 +459,11 @@ SparePart_SubPart.belongsTo(SparePart, { foreignKey: "sparePart_id" });
 SparePart.hasMany(SparePart_Supplier, { foreignKey: "sparePart_id" });
 SparePart_Supplier.belongsTo(SparePart, { foreignKey: "sparePart_id" });
 
-Manufacturer.hasMany(SparePart, { foreignKey: "spareParts_manufacturer" });
-SparePart.belongsTo(Manufacturer, { foreignKey: "spareParts_manufacturer" });
+// Manufacturer.hasMany(SparePart, { foreignKey: "spareParts_manufacturer" });
+// SparePart.belongsTo(Manufacturer, { foreignKey: "spareParts_manufacturer" });
 
-BinLocation.hasMany(SparePart, { foreignKey: "spareParts_location" });
-SparePart.belongsTo(BinLocation, { foreignKey: "spareParts_location" });
+// BinLocation.hasMany(SparePart, { foreignKey: "spareParts_location" });
+// SparePart.belongsTo(BinLocation, { foreignKey: "spareParts_location" });
 
 Supplier.hasMany(SparePart_Supplier, { foreignKey: "supplier_code" });
 SparePart_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code" });
@@ -427,8 +476,8 @@ Supplier.hasMany(SparePartPrice_history, { foreignKey: "supplier_code" });
 SparePartPrice_history.belongsTo(Supplier, { foreignKey: "supplier_code" });
 
 //assembly tag category
-Category.hasMany(SparePart, { foreignKey: "category_code" });
-SparePart.belongsTo(Category, { foreignKey: "category_code" });
+// Category.hasMany(SparePart, { foreignKey: "category_code" });
+// SparePart.belongsTo(Category, { foreignKey: "category_code" });
 
 //purchase_req_canvassed_subpart TAble (subparts)
 PR.hasMany(PR_PO_subpart, { foreignKey: "pr_id" });
@@ -475,23 +524,29 @@ Supplier.hasMany(AssemblyPrice_History, { foreignKey: "supplier_code" });
 AssemblyPrice_History.belongsTo(Supplier, { foreignKey: "supplier_code" });
 
 //assembly tag category
-Category.hasMany(Assembly, { foreignKey: "category_code" });
-Assembly.belongsTo(Category, { foreignKey: "category_code" });
+// Category.hasMany(Assembly, { foreignKey: "category_code" });
+// Assembly.belongsTo(Category, { foreignKey: "category_code" });
 
 //assembly tag bin location
-BinLocation.hasMany(Assembly, { foreignKey: "bin_id" });
-Assembly.belongsTo(BinLocation, { foreignKey: "bin_id" });
+// BinLocation.hasMany(Assembly, { foreignKey: "bin_id" });
+// Assembly.belongsTo(BinLocation, { foreignKey: "bin_id" });
 
 //assembly tag manufacturer
-Manufacturer.hasMany(Assembly, { foreignKey: "assembly_manufacturer" });
-Assembly.belongsTo(Manufacturer, { foreignKey: "assembly_manufacturer" });
+// Manufacturer.hasMany(Assembly, { foreignKey: "assembly_manufacturer" });
+// Assembly.belongsTo(Manufacturer, { foreignKey: "assembly_manufacturer" });
 
 //--------------Stock Transfer Masterlist table
 MasterList.hasMany(StockTransfer, { foreignKey: "col_id", as: "requestor" });
 StockTransfer.belongsTo(MasterList, { foreignKey: "col_id", as: "requestor" });
 
-MasterList.hasMany(StockTransfer, { foreignKey: "masterlist_id", as: "approver" });
-StockTransfer.belongsTo(MasterList, { foreignKey: "masterlist_id", as: "approver" });
+MasterList.hasMany(StockTransfer, {
+  foreignKey: "masterlist_id",
+  as: "approver",
+});
+StockTransfer.belongsTo(MasterList, {
+  foreignKey: "masterlist_id",
+  as: "approver",
+});
 
 MasterList.hasMany(ST_REJECT, { foreignKey: "masterlist_id" });
 ST_REJECT.belongsTo(MasterList, { foreignKey: "masterlist_id" });
@@ -503,34 +558,42 @@ ST_REJECT.belongsTo(StockTransfer, { foreignKey: "stocktransfer_id" });
 StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "stockTransfer_id" });
 StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-
-
 Product.hasMany(StockTransfer_prod, { foreignKey: "product_id" });
 StockTransfer_prod.belongsTo(Product, { foreignKey: "product_id" });
 
 //-------------Stock Transfer Assembly table
-StockTransfer.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
-StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+// StockTransfer.hasMany(StockTransfer_assembly, {
+//   foreignKey: "stockTransfer_id",
+// });
+// StockTransfer_assembly.belongsTo(StockTransfer, {
+//   foreignKey: "stockTransfer_id",
+// });
 
-Assembly.hasMany(StockTransfer_assembly, { foreignKey: "product_id" });
-StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "product_id" });
+// Assembly.hasMany(StockTransfer_assembly, { foreignKey: "product_id" });
+// StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "product_id" });
 
 // Assembly_Supplier.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
 // StockTransfer_assembly.belongsTo(Assembly_Supplier, { foreignKey: "stockTransfer_id" });
 
 //-------------Stock Transfer Spare table
-StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "stockTransfer_id" });
-StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+// StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "stockTransfer_id" });
+// StockTransfer_spare.belongsTo(StockTransfer, {
+//   foreignKey: "stockTransfer_id",
+// });
 
-SparePart.hasMany(StockTransfer_spare, { foreignKey: "product_id" });
-StockTransfer_spare.belongsTo(SparePart, { foreignKey: "product_id" });
+// SparePart.hasMany(StockTransfer_spare, { foreignKey: "product_id" });
+// StockTransfer_spare.belongsTo(SparePart, { foreignKey: "product_id" });
 
-//-------------Stock Transfer Subpart table
-StockTransfer.hasMany(StockTransfer_subpart, { foreignKey: "stockTransfer_id" });
-StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+// //-------------Stock Transfer Subpart table
+// StockTransfer.hasMany(StockTransfer_subpart, {
+//   foreignKey: "stockTransfer_id",
+// });
+// StockTransfer_subpart.belongsTo(StockTransfer, {
+//   foreignKey: "stockTransfer_id",
+// });
 
-SubPart.hasMany(StockTransfer_subpart, { foreignKey: "product_id" });
-StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "product_id" });
+// SubPart.hasMany(StockTransfer_subpart, { foreignKey: "product_id" });
+// StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "product_id" });
 
 //--------------Stock Transfer rejustify
 StockTransfer.hasMany(Stock_Rejustify, { foreignKey: "stockTransfer_id" });
@@ -634,8 +697,6 @@ Receiving_Spare.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
 Receiving_PO.hasMany(Receiving_Subpart, { foreignKey: "receiving_po_id" });
 Receiving_Subpart.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
 
-
-
 //for initial received (davao received)
 PR_PO.hasMany(Receiving_initial_prd, { foreignKey: "canvassed_id" });
 Receiving_initial_prd.belongsTo(PR_PO, { foreignKey: "canvassed_id" });
@@ -646,20 +707,36 @@ Receiving_initial_asm.belongsTo(PR_PO_asmbly, { foreignKey: "canvassed_id" });
 PR_PO_spare.hasMany(Receiving_initial_spare, { foreignKey: "canvassed_id" });
 Receiving_initial_spare.belongsTo(PR_PO_spare, { foreignKey: "canvassed_id" });
 
-PR_PO_subpart.hasMany(Receiving_initial_subpart, { foreignKey: "canvassed_id" });
-Receiving_initial_subpart.belongsTo(PR_PO_subpart, { foreignKey: "canvassed_id" });
+PR_PO_subpart.hasMany(Receiving_initial_subpart, {
+  foreignKey: "canvassed_id",
+});
+Receiving_initial_subpart.belongsTo(PR_PO_subpart, {
+  foreignKey: "canvassed_id",
+});
 
 Receiving_PO.hasMany(Receiving_initial_prd, { foreignKey: "receiving_po_id" });
-Receiving_initial_prd.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+Receiving_initial_prd.belongsTo(Receiving_PO, {
+  foreignKey: "receiving_po_id",
+});
 
 Receiving_PO.hasMany(Receiving_initial_asm, { foreignKey: "receiving_po_id" });
-Receiving_initial_asm.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+Receiving_initial_asm.belongsTo(Receiving_PO, {
+  foreignKey: "receiving_po_id",
+});
 
-Receiving_PO.hasMany(Receiving_initial_spare, { foreignKey: "receiving_po_id" });
-Receiving_initial_spare.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+Receiving_PO.hasMany(Receiving_initial_spare, {
+  foreignKey: "receiving_po_id",
+});
+Receiving_initial_spare.belongsTo(Receiving_PO, {
+  foreignKey: "receiving_po_id",
+});
 
-Receiving_PO.hasMany(Receiving_initial_subpart, { foreignKey: "receiving_po_id" });
-Receiving_initial_subpart.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+Receiving_PO.hasMany(Receiving_initial_subpart, {
+  foreignKey: "receiving_po_id",
+});
+Receiving_initial_subpart.belongsTo(Receiving_PO, {
+  foreignKey: "receiving_po_id",
+});
 
 PR.hasMany(Receiving_PO, { foreignKey: "pr_id" });
 Receiving_PO.belongsTo(PR, { foreignKey: "pr_id" });
@@ -682,15 +759,14 @@ Board_to.belongsTo(MasterList, { foreignKey: "user_to", as: "to" });
 Board.hasMany(Board_to, { foreignKey: "board_id" });
 Board_to.belongsTo(Board, { foreignKey: "board_id" });
 
-Board.hasMany(Board_pic, { foreignKey: "board_id"});
-Board_pic.belongsTo(Board, { foreignKey: "board_id"});
+Board.hasMany(Board_pic, { foreignKey: "board_id" });
+Board_pic.belongsTo(Board, { foreignKey: "board_id" });
 
-Board.hasMany(Board_reply, { foreignKey: "board_id"});
-Board_reply.belongsTo(Board, { foreignKey: "board_id"});
+Board.hasMany(Board_reply, { foreignKey: "board_id" });
+Board_reply.belongsTo(Board, { foreignKey: "board_id" });
 
-MasterList.hasMany(Board_reply, { foreignKey: "reply_by",  as: "replyfrom"});
-Board_reply.belongsTo(MasterList, { foreignKey: "reply_by",  as: "replyfrom"});
-
+MasterList.hasMany(Board_reply, { foreignKey: "reply_by", as: "replyfrom" });
+Board_reply.belongsTo(MasterList, { foreignKey: "reply_by", as: "replyfrom" });
 
 module.exports = {
   MasterList,
@@ -778,7 +854,6 @@ module.exports = {
   Receiving_initial_spare,
   Receiving_initial_subpart,
 
-
   StockTransfer,
   StockTransfer_prod,
   StockTransfer_assembly,
@@ -793,5 +868,5 @@ module.exports = {
   Board,
   Board_to,
   Board_pic,
-  Board_reply
+  Board_reply,
 };

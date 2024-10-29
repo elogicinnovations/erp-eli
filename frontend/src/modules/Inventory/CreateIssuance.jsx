@@ -52,6 +52,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
   const [userId, setuserId] = useState("");
+  const [date_issued, setDateIssued] = useState("");
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -113,25 +114,40 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
     productValue,
     product_quantity_available
   ) => {
-    const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-    const numericValue = parseInt(cleanedValue, 10);
-    let correctedValue = cleanedValue;
+    // Only clean the input of non-numeric characters (keeping decimal points)
+    const cleanedValue = inputValue.replace(/[^\d.]/g, "");
 
-    if (numericValue > product_quantity_available) {
-      correctedValue = product_quantity_available.toString();
+    // Ensure only one decimal point
+    const parts = cleanedValue.split(".");
+    const formattedValue =
+      parts.length > 2
+        ? `${parts[0]}.${parts.slice(1).join("")}`
+        : cleanedValue;
+
+    // Check if the numeric value (when complete) exceeds the available quantity
+    const numericValue = parseFloat(formattedValue);
+    if (!isNaN(numericValue) && numericValue > product_quantity_available) {
       swal({
         icon: "error",
         title: "Input value exceed",
         text: "Please enter a quantity within the available limit.",
       });
+      // Set to maximum allowed value
+      setQuantityInputs((prevInputs) => ({
+        ...prevInputs,
+        [productValue]: product_quantity_available.toString(),
+      }));
+      return;
     }
 
+    // Update the inputs state
     setQuantityInputs((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
-        [productValue]: correctedValue,
+        [productValue]: formattedValue,
       };
 
+      // Update the backend products array
       const serializedProducts = addProduct.map((product) => ({
         quantity: updatedInputs[product.value] || "",
         type: product.type,
@@ -404,6 +420,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
           mrs,
           remarks,
           addProductbackend: addProductbackend,
+          date_issued,
           userId,
         }),
       }).then((res) => {
@@ -461,6 +478,17 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   // };
 
   // ----------------------------------End Validation------------------------------//
+  const onInputFloat = (e) => {
+    // Allow numbers and decimal point, prevent multiple decimal points
+    const value = e.target.value.replace(/[^\d.]/g, "");
+    const parts = value.split(".");
+    if (parts.length > 2) {
+      // More than one decimal point, keep only the first one
+      e.target.value = parts[0] + "." + parts.slice(1).join("");
+    } else {
+      e.target.value = value;
+    }
+  };
 
   return (
     <div className="main-of-containers">
@@ -504,6 +532,23 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                 ></span>
               </div>
 
+              <div className="row mt-3">
+                <div className="col-sm">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Date Issued:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={date_issued}
+                      required
+                      onChange={(e) => setDateIssued(e.target.value)}
+                    />
+                  </Form.Group>
+                </div>
+
+                <div className="col-sm"></div>
+              </div>
               <div className="row mt-3">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput2">
@@ -723,13 +768,12 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                               <td>
                                 <div className="d-flex flex-direction-row align-items-center">
                                   <Form.Control
-                                    type="number"
+                                    type="text"
                                     value={quantityInputs[product.value] || ""}
-                                    onKeyDown={(e) => {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
+                                    onInput={(e) => {
+                                      onInputFloat(e);
                                     }}
-                                    onInput={(e) =>
+                                    onChange={(e) =>
                                       handleQuantityChange(
                                         e.target.value,
                                         product.value,

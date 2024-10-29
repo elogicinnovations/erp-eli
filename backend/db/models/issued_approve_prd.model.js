@@ -1,7 +1,7 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const IssuedApproveProd = sequelize.define('issued_approve_prd', {
+const IssuedApproveProd = sequelize.define("issued_approve_prd", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -19,9 +19,8 @@ const IssuedApproveProd = sequelize.define('issued_approve_prd', {
     unique: false,
   },
   quantity: {
-    type: DataTypes.INTEGER
+    type: DataTypes.DOUBLE,
   },
-
 });
 
 module.exports = IssuedApproveProd;
