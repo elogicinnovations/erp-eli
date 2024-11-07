@@ -25,6 +25,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [searchIssuance, setSearchIssuance] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [inventoryFilter, setInventoryFilter] = useState("All");
+  const [issuanceFilter, setIssuanceFilter] = useState("Pending");
   const [searchInventory, setSearchInventory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setuserId] = useState("");
@@ -145,24 +146,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
 
   useEffect(() => {
     // Fetch issuances and calculate expiration status
-    axios
-      .get(BASE_URL + "/issuance/getIssuance")
-      .then((res) => {
-        const now = new Date();
-        const expirationStatus = {};
-        res.data.forEach((issuance) => {
-          const createdAt = new Date(issuance.createdAt);
-          const threeDaysAgo = new Date(now);
-          threeDaysAgo.setDate(now.getDate() - 3);
-          expirationStatus[issuance.issuance_id] = createdAt < threeDaysAgo;
-        });
-        setIssuanceExpirationStatus(expirationStatus);
-        setIssuance(res.data);
-
-        const hasApproved = res.data.some((item) => item.status === "Approved");
-        setIsPrintDisabled(!hasApproved);
-      })
-      .catch((err) => console.log(err));
   }, []);
 
   const reloadTable_inventory = () => {
@@ -173,6 +156,29 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
           setInventory(res.data.product);
           setSearchInventory(res.data.product);
           setIsLoading(false);
+
+          axios
+            .get(BASE_URL + "/issuance/getIssuance")
+            .then((res) => {
+              const now = new Date();
+              const expirationStatus = {};
+              res.data.forEach((issuance) => {
+                const createdAt = new Date(issuance.createdAt);
+                const threeDaysAgo = new Date(now);
+                threeDaysAgo.setDate(now.getDate() - 3);
+                expirationStatus[issuance.issuance_id] =
+                  createdAt < threeDaysAgo;
+              });
+              setIssuanceExpirationStatus(expirationStatus);
+              setIssuance(res.data);
+              setSearchIssuance(res.data);
+
+              const hasApproved = res.data.some(
+                (item) => item.status === "Approved"
+              );
+              setIsPrintDisabled(!hasApproved);
+            })
+            .catch((err) => console.log(err));
         })
         .catch((err) => {
           console.log(err);
@@ -214,23 +220,32 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
       setSearchInventory(filtered);
     }
   };
-
+  const [searchIssuanceInput, setSearchIssuanceInput] = useState("");
   const handleSearchIssuance = (event) => {
     setCurrentPageIssuance(1);
     const searchTermIssuance = event.target.value.toLowerCase();
-    const filteredDataIssuance = searchIssuance.filter((data) => {
+    setSearchIssuanceInput(searchTermIssuance);
+    const filteredDataIssuance = issuance.filter((data) => {
       return (
-        data.cost_center.name.toLowerCase().includes(searchTermIssuance) ||
-        data.from_site.toLowerCase().includes(searchTermIssuance) ||
-        formatDatetime(data.createdAt)
-          .toLowerCase()
-          .includes(searchTermIssuance) ||
-        data.masterlist.col_Fname.toLowerCase().includes(searchTermIssuance) ||
-        data.mrs.toLowerCase().includes(searchTermIssuance)
+        (data.issuance_id?.toString().toLowerCase() || "").includes(
+          searchTermIssuance
+        ) ||
+        (data.cost_center?.name?.toLowerCase() || "").includes(
+          searchTermIssuance
+        ) ||
+        (data.warehouse?.warehouse_name?.toLowerCase() || "").includes(
+          searchTermIssuance
+        ) ||
+        (data.mrs?.toLowerCase() || "").includes(searchTermIssuance) ||
+        (data.receiver?.col_Fname?.toLowerCase() || "").includes(
+          searchTermIssuance
+        ) ||
+        (data.date_issued?.toLowerCase() || "").includes(searchTermIssuance) ||
+        (data.status?.toLowerCase() || "").includes(searchTermIssuance)
       );
     });
 
-    setIssuance(filteredDataIssuance);
+    setSearchIssuance(filteredDataIssuance); // Changed from setIssuance to setSearchIssuance
   };
 
   const isReturnButtonDisabled = (createdAt) => {
@@ -243,16 +258,51 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     return differenceInDays >= 5;
   };
 
+  const handleFilterIssuance = (e) => {
+    setCurrentPageIssuance(1);
+    setSearchIssuanceInput("");
+    setIssuanceFilter(e.target.value);
+    try {
+      axios
+        .get(BASE_URL + "/issuance/getIssuanceFilter", {
+          params: {
+            status: e.target.value,
+          },
+        })
+        .then((res) => {
+          const now = new Date();
+          const expirationStatus = {};
+          res.data.forEach((issuance) => {
+            const createdAt = new Date(issuance.createdAt);
+            const threeDaysAgo = new Date(now);
+            threeDaysAgo.setDate(now.getDate() - 3);
+            expirationStatus[issuance.issuance_id] = createdAt < threeDaysAgo;
+          });
+          setIssuanceExpirationStatus(expirationStatus);
+          setIssuance(res.data);
+          setSearchIssuance(res.data);
+
+          const hasApproved = res.data.some(
+            (item) => item.status === "Approved"
+          );
+          setIsPrintDisabled(!hasApproved);
+        })
+        .catch((err) => console.log(err));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // Get Issuance
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/issuance/getIssuance")
-      .then((res) => {
-        setIssuance(res.data);
-        setSearchIssuance(res.data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/issuance/getIssuance")
+  //     .then((res) => {
+  //       setIssuance(res.data);
+  //       setSearchIssuance(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   const { id } = useParams();
   const [returned_prd, setReturned_prd] = useState([]);
@@ -1019,24 +1069,54 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                   </div> */}
                   <div className="table-containss">
                     <div className="main-of-all-tables">
-                      <div className="main-table-search">
-                        <TextField
-                          label="Search"
-                          variant="outlined"
-                          style={{ marginBottom: "10px", float: "right" }}
-                          InputLabelProps={{
-                            style: { fontSize: "14px" },
-                          }}
-                          InputProps={{
-                            style: {
-                              fontSize: "14px",
-                              width: "250px",
-                              height: "50px",
-                            },
-                          }}
-                          onChange={handleSearchIssuance}
-                        />
+                      <div className="row">
+                        <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center inv-div-sel">
+                          <div className="form-group">
+                            {/* <label>Select Status</label> */}
+                            <Form.Select
+                              aria-label="item status"
+                              className="form-select form-select-lg mb-3"
+                              onChange={(e) => handleFilterIssuance(e)}
+                              style={{
+                                width: "274px",
+                                height: "45px",
+                                fontSize: "15px",
+                                marginBottom: "15px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                              value={issuanceFilter}
+                            >
+                              <option selected disabled value={""}>
+                                Select Status
+                              </option>
+                              <option value={"Approved"}>Approved</option>
+                              <option value={"Pending"}>Pending</option>
+                              <option value={"Rejected"}>Rejected</option>
+                            </Form.Select>
+                          </div>
+                        </div>
+
+                        <div className="col-6 d-flex justify-content-md-end justify-content-center justify-content-sm-center form-inv-search">
+                          <TextField
+                            label="Search"
+                            variant="outlined"
+                            style={{ marginBottom: "10px", float: "right" }}
+                            InputLabelProps={{
+                              style: { fontSize: "14px" },
+                            }}
+                            value={searchIssuanceInput}
+                            InputProps={{
+                              style: {
+                                fontSize: "14px",
+                                width: "250px",
+                                height: "50px",
+                              },
+                            }}
+                            onChange={handleSearchIssuance}
+                          />
+                        </div>
                       </div>
+                      {/* <div className="main-table-search"></div> */}
                       <table className="table-hover" title="View Information">
                         <thead>
                           <tr>
@@ -1045,8 +1125,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <th className="tableh">Origin Site</th>
                             <th className="tableh">MRS #</th>
                             <th className="tableh">Received By</th>
-                            <th className="tableh">Date Created</th>
+                            <th className="tableh">Date Issued</th>
+                            <th className="tableh">Status</th>
                             <th className="tableh">Action</th>
+
                             {/* <th className="tableh">Print</th> */}
                           </tr>
                         </thead>
@@ -1106,8 +1188,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                     )
                                   }
                                 >
-                                  {formatDatetime(data.createdAt)}
+                                  {data.date_issued}
                                 </td>
+                                <td>{data.status}</td>
                                 <td>
                                   <>
                                     <Button
@@ -1745,8 +1828,8 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                         <th>PRODUCT NAME</th>
                         <th>QUANTITY</th>
                         <th>UOM</th>
-                        <th>LANDED COST</th>
-                        <th>TOTAL</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1756,7 +1839,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           (data.inventory_prd.custom_cost || 0) +
                           data.inventory_prd.price;
 
-                        const TotalPrice = data.quantity + landedCost;
+                        const TotalPrice = data.quantity * landedCost;
 
                         return (
                           <tr key={i}>

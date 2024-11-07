@@ -4,7 +4,7 @@ import "../styles/react-style.css";
 import "../../assets/global/style.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import NoData from "../../assets/image/NoData.png";
 import NoAccess from "../../assets/image/NoAccess.png";
 import axios from "axios";
@@ -12,18 +12,16 @@ import BASE_URL from "../../assets/global/url";
 import { jwtDecode } from "jwt-decode";
 import { CalendarBlank, XCircle, Export } from "@phosphor-icons/react";
 import DatePicker from "react-datepicker";
-import { IconButton, TextField, } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 import swal from "sweetalert";
 import { jsPDF } from "jspdf";
 
-
 const Accountability = ({ authrztn }) => {
-
   const [isLoading, setIsLoading] = useState(true);
   const [fetchAccountability, setFetchAccountability] = useState([]);
-  const [fetchIssuedProduct, setFetchIssuedProduct] = useState([])
-  const [showAccountabilityModal, setShowAccountabilityModal] = useState(false)
-  const [fetchCloneData, setFetchCloneDate] = useState([])
+  const [fetchIssuedProduct, setFetchIssuedProduct] = useState([]);
+  const [showAccountabilityModal, setShowAccountabilityModal] = useState(false);
+  const [fetchCloneData, setFetchCloneDate] = useState([]);
 
   //filter useState
   const [startDate, setStartDate] = useState(null);
@@ -35,7 +33,7 @@ const Accountability = ({ authrztn }) => {
   const [exportOptionsVisible, setExportOptionsVisible] = useState(false);
   const exportOptionsRef = useRef(null);
 
-  //pagination 
+  //pagination
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const totalPages = Math.ceil(fetchAccountability.length / pageSize);
@@ -75,18 +73,16 @@ const Accountability = ({ authrztn }) => {
     return pages;
   };
 
-
   const handlePageClick = (page) => {
     if (page === "...") return;
     setCurrentPage(page);
   };
 
-
   const CloseAccountabilityModal = () => setShowAccountabilityModal(false);
 
   const handleModalAccountability = (masterListId) => {
-    setShowAccountabilityModal(true)
-    const ApprovedId = masterListId
+    setShowAccountabilityModal(true);
+    const ApprovedId = masterListId;
     axios
       .get(BASE_URL + "/accountability/fetchSpecificProduct", {
         params: {
@@ -97,7 +93,7 @@ const Accountability = ({ authrztn }) => {
         setFetchIssuedProduct(res.data);
       })
       .catch((err) => console.log(err));
-  }
+  };
 
   //search section
   const handleSearch = (event) => {
@@ -105,8 +101,12 @@ const Accountability = ({ authrztn }) => {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = fetchCloneData.filter((data) => {
       return (
-        data.issued_approve_prd.issuance.receiver.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.issued_approve_prd.issuance.receiver.department.department_name.toLowerCase().includes(searchTerm) ||
+        data.issued_approve_prd.issuance.receiver.col_Fname
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.issued_approve_prd.issuance.receiver.department.department_name
+          .toLowerCase()
+          .includes(searchTerm) ||
         formatDate(data.createdAt).toLowerCase().includes(searchTerm)
       );
     });
@@ -147,7 +147,6 @@ const Accountability = ({ authrztn }) => {
 
     const filteredData = fetchCloneData.filter((data) => {
       const createdAt = new Date(data.createdAt);
-
 
       const isWithinDateRange =
         (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
@@ -206,7 +205,7 @@ const Accountability = ({ authrztn }) => {
         .get(BASE_URL + "/accountability/fetchAccountability")
         .then((res) => {
           setFetchAccountability(res.data);
-          setFetchCloneDate(res.data)
+          setFetchCloneDate(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -249,7 +248,8 @@ const Accountability = ({ authrztn }) => {
           const isMatchingUser =
             !selecteduser ||
             selecteduser === "All User" ||
-            data.issued_approve_prd.issuance.receiver.col_Fname === selecteduser;
+            data.issued_approve_prd.issuance.receiver.col_Fname ===
+              selecteduser;
           return isWithinDateRange && isMatchingUser;
         });
       } else {
@@ -259,15 +259,37 @@ const Accountability = ({ authrztn }) => {
       }
 
       if (dataForExport.length > 0) {
-        const headers = ["Name", "Department", "Product Name", "UOM", "QUANTITY", "SUB-UNIT", "DATE ISSUED"];
+        const headers = [
+          "Name",
+          "Department",
+          "Product Name",
+          "UOM",
+          "QUANTITY",
+          "SUB-UNIT",
+          "DATE ISSUED",
+        ];
         const csvContent =
           "data:text/csv;charset=utf-8," +
           headers.join(",") +
           "\n" +
           dataForExport
             .map((data) => {
-              const subUnit = data.issued_approve_prd.inventory_prd.product_tag_supplier.product.UOM_set ? "Sub-Unit(Applicable)" : "Sub-Unit(Not-Applicable)";
-            return `${data.issued_approve_prd.issuance.receiver.col_Fname},${data.issued_approve_prd.issuance.receiver.department.department_name},${data.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_name},${data.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_unitMeasurement},${data.issued_approve_prd.quantity},${subUnit},${formatDate(data.createdAt)}`;
+              const subUnit = data.issued_approve_prd.inventory_prd
+                .product_tag_supplier.product.UOM_set
+                ? "Sub-Unit(Applicable)"
+                : "Sub-Unit(Not-Applicable)";
+              return `${data.issued_approve_prd.issuance.receiver.col_Fname},${
+                data.issued_approve_prd.issuance.receiver.department
+                  .department_name
+              },${
+                data.issued_approve_prd.inventory_prd.product_tag_supplier
+                  .product.product_name
+              },${
+                data.issued_approve_prd.inventory_prd.product_tag_supplier
+                  .product.product_unitMeasurement
+              },${data.issued_approve_prd.quantity},${subUnit},${formatDate(
+                data.createdAt
+              )}`;
             })
             .join("\n");
 
@@ -285,14 +307,13 @@ const Accountability = ({ authrztn }) => {
     }
   };
 
-
   const handleExportPDF = async () => {
     // setIsLoading(true);
     try {
       const doc = new jsPDF();
       let res;
       let dataForExportPDF;
-  
+
       // Check if any filter is applied
       if (startDate || endDate || selecteduser) {
         // Filtered export
@@ -305,7 +326,8 @@ const Accountability = ({ authrztn }) => {
           const isMatchingUser =
             !selecteduser ||
             selecteduser === "All User" ||
-            data.issued_approve_prd.issuance.receiver.col_Fname === selecteduser;
+            data.issued_approve_prd.issuance.receiver.col_Fname ===
+              selecteduser;
           return isWithinDateRange && isMatchingUser;
         });
       } else {
@@ -313,20 +335,46 @@ const Accountability = ({ authrztn }) => {
         dataForExportPDF = res.data;
         console.log(dataForExportPDF);
       }
-  
+
       if (dataForExportPDF.length > 0) {
-        const headers = ["Name", "Department", "Product Name", "UOM", "Quantity", "Sub-unit", "Date issued"];
+        const headers = [
+          "Name",
+          "Department",
+          "Product Name",
+          "UOM",
+          "Quantity",
+          "Sub-unit",
+          "Date issued",
+        ];
         const data = dataForExportPDF.map((account) => {
-          const col_Fname = account.issued_approve_prd.issuance.receiver.col_Fname;
-          const department = account.issued_approve_prd.issuance.receiver.department.department_name;
-          const productName = account.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_name;
-          const UOM = account.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_unitMeasurement;
-          const subUnit = account.issued_approve_prd.inventory_prd.product_tag_supplier.product.UOM_set ? "Sub-Unit(Applicable)" : "Sub-Unit(Not-Applicable)";
+          const col_Fname =
+            account.issued_approve_prd.issuance.receiver.col_Fname;
+          const department =
+            account.issued_approve_prd.issuance.receiver.department
+              .department_name;
+          const productName =
+            account.issued_approve_prd.inventory_prd.product_tag_supplier
+              .product.product_name;
+          const UOM =
+            account.issued_approve_prd.inventory_prd.product_tag_supplier
+              .product.product_unitMeasurement;
+          const subUnit = account.issued_approve_prd.inventory_prd
+            .product_tag_supplier.product.UOM_set
+            ? "Sub-Unit(Applicable)"
+            : "Sub-Unit(Not-Applicable)";
           const qty = account.issued_approve_prd.quantity;
-          
-          return [col_Fname, department, productName, UOM, qty, subUnit, formatDate(account.createdAt)];
+
+          return [
+            col_Fname,
+            department,
+            productName,
+            UOM,
+            qty,
+            subUnit,
+            formatDate(account.createdAt),
+          ];
         });
-  
+
         doc.autoTable({
           head: [headers],
           body: data,
@@ -334,17 +382,17 @@ const Accountability = ({ authrztn }) => {
           styles: { fontSize: 12, cellPadding: 2 },
           headStyles: { fillColor: [255, 200, 0] },
           columnStyles: {
-            0: { cellWidth: 18 }, 
-            1: { cellWidth: 30 }, 
-            2: { cellWidth: 38 }, 
-            3: { cellWidth: 15 }, 
-            4: { cellWidth: 30 }, 
-            5: { cellWidth: 30 }, 
-            6: { cellWidth: 30 }, 
-          }, 
+            0: { cellWidth: 18 },
+            1: { cellWidth: 30 },
+            2: { cellWidth: 38 },
+            3: { cellWidth: 15 },
+            4: { cellWidth: 30 },
+            5: { cellWidth: 30 },
+            6: { cellWidth: 30 },
+          },
           margin: { horizontal: 10 },
         });
-  
+
         doc.save("accountability.pdf");
       } else {
         console.log("No data available for export.");
@@ -371,7 +419,7 @@ const Accountability = ({ authrztn }) => {
                 </div>
 
                 <div className="button-create-side">
-                <div style={{ position: "relative", marginBottom: "15px" }}>
+                  <div style={{ position: "relative", marginBottom: "15px" }}>
                     <DatePicker
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
@@ -490,9 +538,7 @@ const Accountability = ({ authrztn }) => {
                     >
                       FILTER
                     </button>
-                    <button className="Filterclear" 
-                    onClick={clearFilters}
-                    >
+                    <button className="Filterclear" onClick={clearFilters}>
                       Clear Filter
                     </button>
                   </div>
@@ -545,15 +591,45 @@ const Accountability = ({ authrztn }) => {
                     </tr>
                   </thead>
                   {fetchAccountability.length > 0 ? (
-                  <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr key={i}>
-                      <td onClick={() => handleModalAccountability(data.issued_approve_prd.issuance.receiver.col_id)}>{data.issued_approve_prd.issuance.receiver.col_Fname}</td>
-                      <td onClick={() => handleModalAccountability(data.issued_approve_prd.issuance.receiver.col_id)}>{data.issued_approve_prd.issuance.receiver.department.department_name}</td>
-                      <td onClick={() => handleModalAccountability(data.issued_approve_prd.issuance.receiver.col_id)}>{formatDate(data.createdAt)}</td>
-                    </tr>
-                  ))}
-                  </tbody>
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td
+                            onClick={() =>
+                              handleModalAccountability(
+                                data.issued_approve_prd.issuance.receiver.col_id
+                              )
+                            }
+                          >
+                            {
+                              data.issued_approve_prd.issuance.receiver
+                                .col_Fname
+                            }
+                          </td>
+                          <td
+                            onClick={() =>
+                              handleModalAccountability(
+                                data.issued_approve_prd.issuance.receiver.col_id
+                              )
+                            }
+                          >
+                            {
+                              data.issued_approve_prd.issuance.receiver
+                                .department.department_name
+                            }
+                          </td>
+                          <td
+                            onClick={() =>
+                              handleModalAccountability(
+                                data.issued_approve_prd.issuance.receiver.col_id
+                              )
+                            }
+                          >
+                            {formatDate(data.createdAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
@@ -656,27 +732,52 @@ const Accountability = ({ authrztn }) => {
         <Modal.Body>
           <div className="main-of-all-tables">
             <table className="hover" id="order-listing">
-                <thead>
-                  <tr>
-                    <th>PRODUCT NAME</th>
-                    <th>UOM</th>
-                    <th>QUANTITY</th>
-                    <th>SUB-UNIT</th>
-                    <th>DATE ISSUED</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <thead>
+                <tr>
+                  <th>BIS #</th>
+                  <th>MRS #</th>
+                  <th>Accountability Refcode</th>
+                  <th>PRODUCT NAME</th>
+                  <th>UOM</th>
+                  <th>QUANTITY</th>
+                  <th>SUB-UNIT</th>
+                  <th>DATE ISSUED</th>
+                </tr>
+              </thead>
+              <tbody>
                 {fetchIssuedProduct.map((data, i) => (
                   <tr key={i}>
-                    <td>{data.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_name}</td>
-                    <td>{data.issued_approve_prd.inventory_prd.product_tag_supplier.product.product_unitMeasurement}</td>
+                    <td>{data.issued_approve_prd.issuance.issuance_id}</td>
+                    <td>{data.issued_approve_prd.issuance.mrs}</td>
+                    <td>
+                      {data.issued_approve_prd.issuance.accountability_refcode}
+                    </td>
+                    <td>
+                      {
+                        data.issued_approve_prd.inventory_prd
+                          .product_tag_supplier.product.product_name
+                      }
+                    </td>
+                    <td>
+                      {
+                        data.issued_approve_prd.inventory_prd
+                          .product_tag_supplier.product.product_unitMeasurement
+                      }
+                    </td>
                     <td>{data.issued_approve_prd.quantity}</td>
-                    <td>Sub-Unit ({data.issued_approve_prd.inventory_prd.product_tag_supplier.product.UOM_set ? 'Applicable' : 'Not Applicable'})</td>
-                    <td>{formatDate(data.createdAt)}</td>
+                    <td>
+                      Sub-Unit (
+                      {data.issued_approve_prd.inventory_prd
+                        .product_tag_supplier.product.UOM_set
+                        ? "Applicable"
+                        : "Not Applicable"}
+                      )
+                    </td>
+                    <td>{data.issued_approve_prd.issuance.date_issued}</td>
                   </tr>
                 ))}
-                </tbody>
-              </table>
+              </tbody>
+            </table>
           </div>
         </Modal.Body>
       </Modal>

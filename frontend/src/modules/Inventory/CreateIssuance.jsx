@@ -403,34 +403,44 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
       //     fromSite,issuedTo,withAccountability,accountabilityRefcode,serialNumber,
       //     jobOrderRefcode,receivedBy,transportedBy,mrs,remarks, addProductbackend
       //   })
-      fetch(BASE_URL + "/issuance/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fromSite,
-          issuedTo,
-          withAccountability,
-          accountabilityRefcode,
-          serialNumber,
-          jobOrderRefcode,
-          receivedBy,
-          transportedBy,
-          mrs,
-          remarks,
-          addProductbackend: addProductbackend,
-          date_issued,
-          userId,
-        }),
-      }).then((res) => {
-        console.log(res);
-        if (res.status === 200) {
-          SuccessInserted(res);
-        } else if (res.status === 201) {
-          Duplicate_Message();
-        } else {
-          ErrorInserted();
+
+      swal({
+        title: "Are you sure?",
+        text: "You are about to create a new Issuance!",
+        icon: "warning",
+        buttons: true,
+      }).then((willCreate) => {
+        if (willCreate) {
+          fetch(BASE_URL + "/issuance/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fromSite,
+              issuedTo,
+              withAccountability,
+              accountabilityRefcode,
+              serialNumber,
+              jobOrderRefcode,
+              receivedBy,
+              transportedBy,
+              mrs,
+              remarks,
+              addProductbackend: addProductbackend,
+              date_issued,
+              userId,
+            }),
+          }).then((res) => {
+            console.log(res);
+            if (res.status === 200) {
+              SuccessInserted(res);
+            } else if (res.status === 201) {
+              Duplicate_Message();
+            } else {
+              ErrorInserted();
+            }
+          });
         }
       });
     }
@@ -451,8 +461,8 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   };
   const Duplicate_Message = () => {
     swal({
-      title: "Issuance Already Exist",
-      text: "",
+      title: "Opss",
+      text: "MRS already exists",
       icon: "error",
       button: "OK",
     });

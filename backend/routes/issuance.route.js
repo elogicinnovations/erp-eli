@@ -60,9 +60,53 @@ router.route("/getIssuance").get(async (req, res) => {
           required: true,
         },
       ],
-      // where: {
-      //     issuance_id: req.query.id
-      // }
+      where: {
+        status: "Pending",
+      },
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route("/getIssuanceFilter").get(async (req, res) => {
+  const { status } = req.query;
+  try {
+    const data = await Issuance.findAll({
+      include: [
+        {
+          model: MasterList,
+          as: "receiver", // Specify the alias for received_by association
+          attributes: ["col_Fname"],
+          foreignKey: "received_by", // Use the foreign key associated with received_by
+          required: true,
+        },
+        {
+          model: MasterList,
+          as: "sender", // Specify the alias for transported_by association
+          attributes: ["col_Fname"],
+          foreignKey: "transported_by", // Use the foreign key associated with transported_by
+          required: true,
+        },
+        {
+          model: CostCenter,
+          required: true,
+        },
+        {
+          model: Warehouses,
+          required: true,
+        },
+      ],
+      where: {
+        status: status,
+      },
     });
 
     if (data) {
@@ -78,14 +122,11 @@ router.route("/getIssuance").get(async (req, res) => {
 
 router.route("/lastAccRefCode").get(async (req, res) => {
   try {
-    const lastCodes = await Issuance.findOne({
-      order: [["issuance_id", "DESC"]],
-    });
+    const lastCodes = await Issuance.max("accountability_refcode");
 
     let nextCode;
     if (lastCodes) {
-      const lastCode = lastCodes.accountability_refcode;
-      const lastNumber = parseInt(lastCode.substring(1), 10);
+      const lastNumber = parseInt(lastCodes.substring(1), 10);
       nextCode = (lastNumber + 1).toString().padStart(6, "0");
     } else {
       nextCode = "000001"; // Initial category code
@@ -182,21 +223,25 @@ router.route("/approval").post(async (req, res) => {
     if (product && product.length > 0) {
       for (const prod of product) {
         let remainingQuantity = prod.quantity;
+
+        // console.log(`${prod.product.product_name} --  ${prod.quantity}`);
+        // return;
         const productName = prod.product.product_name;
         const checkPrd = await Inventory.findAll({
           where: {
             warehouse_id: warehouseId,
+            quantity: {
+              [Op.ne]: 0,
+            },
           },
           include: [
             {
               model: ProductTAGSupplier,
               required: true,
-
               include: [
                 {
                   model: Product,
                   required: true,
-
                   where: {
                     product_id: prod.product_id,
                   },
@@ -210,7 +255,8 @@ router.route("/approval").post(async (req, res) => {
           ],
         });
 
-        checkPrd.forEach(async (inventory) => {
+        // Change from forEach to a for...of loop to handle async properly
+        for (const inventory of checkPrd) {
           console.log(
             `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
           );
@@ -218,7 +264,8 @@ router.route("/approval").post(async (req, res) => {
             console.log(
               `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
             );
-            Inventory.update(
+            await Inventory.update(
+              // Added await for proper async handling
               { quantity: inventory.quantity - remainingQuantity },
               {
                 where: { inventory_id: inventory.inventory_id },
@@ -247,13 +294,14 @@ router.route("/approval").post(async (req, res) => {
                 issued_approve_prd_id: ApprovedIssueProduct,
               });
             }
-            //   ; // Break the loop since remainingQuantity is now 0
+            break; // Break the loop since remainingQuantity is now 0
           } else {
             console.log(
-              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+              `-----------------------------Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
             );
             remainingQuantity -= inventory.quantity;
-            Inventory.update(
+            await Inventory.update(
+              // Added await for proper async handling
               { quantity: 0 },
               {
                 where: { inventory_id: inventory.inventory_id },
@@ -282,7 +330,7 @@ router.route("/approval").post(async (req, res) => {
               });
             }
           }
-        });
+        }
 
         //for activity log
         const findIssuance = await Issuance.findOne({
@@ -425,11 +473,24 @@ router.route("/create").post(async (req, res) => {
   const { addProductbackend, userId } = req.body;
 
   try {
+    const checkMRS = await Issuance.findOne({
+      where: {
+        mrs: req.body.mrs,
+      },
+    });
+
+    if (checkMRS) {
+      return res.status(201).json();
+    }
+
     const Issue_newData = await Issuance.create({
       from_site: req.body.fromSite,
       issued_to: req.body.issuedTo,
       with_accountability: req.body.withAccountability,
-      accountability_refcode: req.body.accountabilityRefcode,
+      accountability_refcode:
+        req.body.withAccountability === "true"
+          ? req.body.accountabilityRefcode
+          : null,
       serial_number: req.body.serialNumber,
       job_order_refcode: req.body.jobOrderRefcode,
       received_by: req.body.receivedBy,
@@ -596,6 +657,154 @@ router.route("/updateDateIssued").post(async (req, res) => {
     { where: { issuance_id: id } }
   );
   res.status(200).json();
+});
+
+router.route("/retrackIssuance").post(async (req, res) => {
+  // dapat ma test if accurate ba ang mga nasa inventory na laman
+  const fetchApprovedIssuance = await IssuedApproveProduct.findAll();
+  const fetchIssuedProduct = await IssuedProduct.findAll({
+    include: [
+      {
+        model: Issuance,
+        required: true,
+        where: {
+          status: "Approved",
+        },
+      },
+    ],
+  });
+  if (fetchApprovedIssuance) {
+    const promises = fetchApprovedIssuance.map(async (product) => {
+      // Decrement the quantity in IssuedApproveProduct first
+      // await product.dedelecrement("quantity", {
+      //   by: parseFloat(product.quantity),
+      // });
+
+      // Increment the quantity in Inventory
+      await Inventory.increment("quantity", {
+        by: parseFloat(product.quantity),
+        where: { inventory_id: product.inventory_id },
+      });
+
+      // Delete the product from IssuedApproveProduct
+      await IssuedApproveProduct.destroy({
+        where: { id: product.id },
+      });
+    });
+
+    const promises2 = fetchIssuedProduct.map(async (prod) => {
+      let remainingQuantity = prod.quantity;
+      const checkPrd = await Inventory.findAll({
+        where: {
+          warehouse_id: prod.issuance.from_site,
+          quantity: {
+            [Op.ne]: 0,
+          },
+        },
+        include: [
+          {
+            model: ProductTAGSupplier,
+            required: true,
+            include: [
+              {
+                model: Product,
+                required: true,
+                where: {
+                  product_id: prod.product_id,
+                },
+              },
+            ],
+          },
+          {
+            model: Warehouses,
+            required: true,
+          },
+        ],
+      });
+
+      // Change from forEach to a for...of loop to handle async properly
+      for (const inventory of checkPrd) {
+        console.log(
+          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
+        );
+        if (remainingQuantity <= inventory.quantity) {
+          console.log(
+            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+          );
+          await Inventory.update(
+            // Added await for proper async handling
+            { quantity: inventory.quantity - remainingQuantity },
+            {
+              where: { inventory_id: inventory.inventory_id },
+            }
+          );
+
+          const getId = await IssuedApproveProduct.create({
+            inventory_id: inventory.inventory_id,
+            issuance_id: prod.issuance_id,
+            quantity: remainingQuantity,
+          });
+          remainingQuantity = 0;
+
+          const ApprovedIssueProduct = getId.id;
+
+          //for accountability
+          const checkAccountability = await Issuance.findOne({
+            where: {
+              issuance_id: prod.issuance_id,
+              with_accountability: "true",
+            },
+          });
+
+          if (checkAccountability) {
+            await Accountability.create({
+              issued_approve_prd_id: ApprovedIssueProduct,
+            });
+          }
+          break; // Break the loop since remainingQuantity is now 0
+        } else {
+          console.log(
+            `-----------------------------Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+          );
+          remainingQuantity -= inventory.quantity;
+          await Inventory.update(
+            // Added await for proper async handling
+            { quantity: 0 },
+            {
+              where: { inventory_id: inventory.inventory_id },
+            }
+          );
+
+          const getId = await IssuedApproveProduct.create({
+            inventory_id: inventory.inventory_id,
+            issuance_id: prod.issuance_id,
+            quantity: inventory.quantity,
+          });
+
+          const ApprovedIssueProduct = getId.id;
+
+          //for accountability
+          const checkAccountability = await Issuance.findOne({
+            where: {
+              issuance_id: prod.issuance_id,
+              with_accountability: "true",
+            },
+          });
+
+          if (checkAccountability) {
+            await Accountability.create({
+              issued_approve_prd_id: ApprovedIssueProduct,
+            });
+          }
+        }
+      }
+    });
+
+    await Promise.all(promises); // Wait for all promises to complete
+    await Promise.all(promises2); // Wait for all promises to complete
+
+    console.log("Issuance has been retracted");
+  }
 });
 
 module.exports = router;
