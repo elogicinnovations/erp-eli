@@ -597,7 +597,7 @@ function StockManagement({ authrztn }) {
                       <th className="tableh">Destination</th>
                       <th className="tableh">Requested By:</th>
                       <th className="tableh">Status</th>
-                      <th className="tableh">Date Requested</th>
+                      <th className="tableh">Date Transfered</th>
                       <th className="tableh">Action</th>
                     </tr>
                   </thead>
@@ -685,45 +685,17 @@ function StockManagement({ authrztn }) {
                                 )
                               }
                             >
-                              {formatDatetime(data.createdAt)}
+                              {data.date_transfer}
                             </td>
                             <td>
-                              <DotsThreeCircle
-                                size={32}
-                                className="dots-icon"
-                                style={{
-                                  cursor: "pointer",
-                                  transform: `rotate(${
-                                    rotatedIcons[i] ? "90deg" : "0deg"
-                                  })`,
-                                  color: rotatedIcons[i] ? "#666" : "#000",
-                                  transition:
-                                    "transform 0.3s ease-in-out, color 0.3s ease-in-out",
-                                }}
-                                onClick={(event) => toggleDropdown(event, i)}
-                              />
-                              <div
-                                className="choices"
-                                style={{
-                                  position: "fixed",
-                                  top: dropdownPosition.top - 30 + "px",
-                                  left: dropdownPosition.left - 100 + "px",
-                                  opacity: showDropdown ? 1 : 0,
-                                  visibility: showDropdown
-                                    ? "visible"
-                                    : "hidden",
-                                  transition:
-                                    "opacity 0.3s ease-in-out, visibility 0.3s ease-in-out",
-                                  boxShadow: "0 3px 5px rgba(0, 0, 0, 0.2)",
-                                }}
-                              >
-                                <button
+                              {data.status === "Pending" && (
+                                <Button
                                   onClick={() => handleDelete(data.stock_id)}
-                                  className="btn"
+                                  variant="danger"
                                 >
                                   Cancel
-                                </button>
-                              </div>
+                                </Button>
+                              )}
                             </td>
                           </tr>
                           <tr>

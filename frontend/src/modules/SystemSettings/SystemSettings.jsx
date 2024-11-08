@@ -431,6 +431,10 @@ function SystemSettings() {
             {userId === 1 && (
               <div className="row">
                 <div className="col-sm">
+                  {/* <span style={{ fontSize: "20px" }}>
+                    Para sa pag alignment ng mga issuance kasi d na allign sa
+                    double insert na bug upon approving ng ISSUANCE
+                  </span> */}
                   <Button variant="danger" onClick={handleRetrackIssuance}>
                     <span>
                       <WarningCircle size={20} />

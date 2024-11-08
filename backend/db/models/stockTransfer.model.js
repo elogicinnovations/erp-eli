@@ -1,12 +1,12 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const StockTransfer = sequelize.define('stock_transfer', {
+const StockTransfer = sequelize.define("stock_transfer", {
   stock_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   source: {
     type: DataTypes.INTEGER,
@@ -20,26 +20,29 @@ const StockTransfer = sequelize.define('stock_transfer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  col_id: { // nag request na masterlist
+  col_id: {
+    // nag request na masterlist
     type: DataTypes.INTEGER,
   },
-  masterlist_id: { // nag approve ng request
+  masterlist_id: {
+    // nag approve ng request
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
   },
   date_approved: {
     type: DataTypes.DATE,
-    allowNull: true
+    allowNull: true,
   },
   remarks: {
     type: DataTypes.STRING,
   },
-  status:{
+  status: {
     type: DataTypes.STRING,
-    
-  }
+  },
+  date_transfer: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
 });
-
-
 
 module.exports = StockTransfer;

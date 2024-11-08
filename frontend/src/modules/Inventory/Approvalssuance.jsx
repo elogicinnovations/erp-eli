@@ -519,7 +519,10 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                                 data.inventory_prd.price +
                                 data.inventory_prd.freight_cost +
                                 data.inventory_prd.custom_cost
-                              ).toFixed(2)}
+                              ).toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
                             </td>
                             <td>
                               {

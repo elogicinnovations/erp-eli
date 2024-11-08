@@ -264,49 +264,49 @@ router.route("/fetchProdutsPreview").get(async (req, res) => {
       ],
     });
 
-    const asm = await StockTransfer_assembly.findAll({
-      where: {
-        stockTransfer_id: req.query.id,
-      },
-      include: [
-        {
-          model: Assembly,
-          required: true,
-        },
-      ],
-    });
+    // const asm = await StockTransfer_assembly.findAll({
+    //   where: {
+    //     stockTransfer_id: req.query.id,
+    //   },
+    //   include: [
+    //     {
+    //       model: Assembly,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
-    const spare = await StockTransfer_spare.findAll({
-      where: {
-        stockTransfer_id: req.query.id,
-      },
-      include: [
-        {
-          model: SparePart,
-          required: true,
-        },
-      ],
-    });
+    // const spare = await StockTransfer_spare.findAll({
+    //   where: {
+    //     stockTransfer_id: req.query.id,
+    //   },
+    //   include: [
+    //     {
+    //       model: SparePart,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
-    const subpart = await StockTransfer_subpart.findAll({
-      where: {
-        stockTransfer_id: req.query.id,
-      },
-      include: [
-        {
-          model: SubPart,
-          required: true,
-        },
-      ],
-    });
+    // const subpart = await StockTransfer_subpart.findAll({
+    //   where: {
+    //     stockTransfer_id: req.query.id,
+    //   },
+    //   include: [
+    //     {
+    //       model: SubPart,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
     // console.log(prd);
 
     return res.json({
       product_db: prd,
-      asm_db: asm,
-      spare_db: spare,
-      subpart_db: subpart,
+      // asm_db: asm,
+      // spare_db: spare,
+      // subpart_db: subpart,
     });
   } catch (err) {
     console.error(err);
@@ -414,6 +414,7 @@ router.route("/create").post(async (req, res) => {
       remarks,
       addProductbackend,
       userId,
+      dateTransfers,
     } = req.body;
 
     const StockTransfer_newData = await StockTransfer.create({
@@ -423,6 +424,7 @@ router.route("/create").post(async (req, res) => {
       col_id: col_id,
       remarks: remarks,
       status: "Pending",
+      date_transfer: dateTransfers,
     });
 
     // console.log("Warehouse IDdsadsadasdsa" + destination);

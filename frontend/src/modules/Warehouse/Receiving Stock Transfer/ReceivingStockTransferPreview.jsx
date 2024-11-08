@@ -234,7 +234,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
             addSparebackend,
             addSubpartbackend,
             id,
-            userId
+            userId,
           },
         })
         .then((res) => {
@@ -919,7 +919,9 @@ function ReceivingStockTransferPreview({ authrztn }) {
 
                       <div className="transferby">
                         <span>Approved By</span>
-                        <span><strong>{users}</strong></span>
+                        <span>
+                          <strong>{users}</strong>
+                        </span>
                       </div>
                     </div>
 
@@ -1031,128 +1033,6 @@ function ReceivingStockTransferPreview({ authrztn }) {
                               checked={
                                 data.quality_assurance === "true" ? true : false
                               }
-                            />
-                          </div>
-                        </td> */}
-                        </tr>
-                      ))}
-
-                      {asmFetch.map((data, i) => (
-                        <tr key={data.id}>
-                          <td>{data.assembly.assembly_code}</td>
-                          <td>{data.assembly.assembly_name}</td>
-                          <td>{data.assembly.assembly_unitMeasurement}</td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={quantityInputs_asm[data.id] || ""}
-                              onInput={(e) =>
-                                handleQuantityChange_asm(
-                                  e.target.value,
-                                  data.id,
-                                  data.quantity
-                                )
-                              }
-                              required
-                              placeholder="Input quantity"
-                              style={{
-                                height: "40px",
-                                width: "120px",
-                                fontSize: "15px",
-                              }}
-                            />
-                          </td>
-                          {/* <td>
-                          <div className="tab_checkbox">
-                            <input
-                              type="checkbox"
-                              checked={
-                                data.quality_assurance === "true" ? true : false
-                              }
-                              // onChange={(e) => handleActiveStatusAssembly(data.id)}
-                            />
-                          </div>
-                        </td> */}
-                        </tr>
-                      ))}
-
-                      {spareFetch.map((data, i) => (
-                        <tr key={data.id}>
-                          <td>{data.sparePart.spareParts_code}</td>
-                          <td>{data.sparePart.spareParts_name}</td>
-
-                          <td>{data.sparePart.spareParts_unitMeasurement}</td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={quantityInputs_spare[data.id] || ""}
-                              onInput={(e) =>
-                                handleQuantityChange_spare(
-                                  e.target.value,
-                                  data.id,
-                                  data.quantity
-                                )
-                              }
-                              required
-                              placeholder="Input quantity"
-                              style={{
-                                height: "40px",
-                                width: "120px",
-                                fontSize: "15px",
-                              }}
-                            />
-                          </td>
-                          {/* <td>
-                          <div className="tab_checkbox">
-                            <input
-                              type="checkbox"
-                              checked={
-                                data.quality_assurance === "true" ? true : false
-                              }
-                              // onChange={(e) => handleActiveStatusSparePart(data.id)}
-                            />
-                          </div>
-                        </td> */}
-                        </tr>
-                      ))}
-
-                      {subpartFetch.map((data, i) => (
-                        <tr key={data.id}>
-                          <td>{data.subPart.subPart_code}</td>
-                          <td>{data.subPart.subPart_name}</td>
-
-                          <td>{data.subPart.subPart_unitMeasurement}</td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={quantityInputs_subpart[data.id] || ""}
-                              onInput={(e) =>
-                                handleQuantityChange_subpart(
-                                  e.target.value,
-                                  data.id,
-                                  data.quantity
-                                )
-                              }
-                              required
-                              placeholder="Input quantity"
-                              style={{
-                                height: "40px",
-                                width: "120px",
-                                fontSize: "15px",
-                              }}
-                            />
-                          </td>
-                          {/* <td>
-                          <div className="tab_checkbox">
-                            <input
-                              type="checkbox"
-                              checked={
-                                data.quality_assurance === "true" ? true : false
-                              }
-                              // onChange={(e) => handleActiveStatusSubPart(data.id)}
                             />
                           </div>
                         </td> */}

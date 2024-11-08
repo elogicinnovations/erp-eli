@@ -804,6 +804,7 @@ router.route("/retrackIssuance").post(async (req, res) => {
     await Promise.all(promises2); // Wait for all promises to complete
 
     console.log("Issuance has been retracted");
+    return res.status(200).json();
   }
 });
 

@@ -48,7 +48,7 @@ function CreateStockTransfer({ authrztn }) {
   const [destinationwarehouse, setDestinationWarehouse] = useState([]);
   const [destination, setDestination] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
-
+  const [dateTransfers, setDateTransfers] = useState("");
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
@@ -263,6 +263,7 @@ function CreateStockTransfer({ authrztn }) {
           remarks,
           addProductbackend,
           userId,
+          dateTransfers,
         });
 
         console.log(response);
@@ -434,6 +435,20 @@ function CreateStockTransfer({ authrztn }) {
                     transform: "translateY(-50%)",
                   }}
                 ></span>
+              </div>
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>Date: </Form.Label>
+                    <Form.Control
+                      required
+                      type="date"
+                      value={dateTransfers}
+                      onChange={(e) => setDateTransfers(e.target.value)}
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </div>
               </div>
               <div className="row mt-3">
                 <div className="col-6">

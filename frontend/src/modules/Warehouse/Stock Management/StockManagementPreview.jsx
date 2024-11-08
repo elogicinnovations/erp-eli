@@ -18,10 +18,7 @@ import subwarehouse from "../../../assets/global/subwarehouse";
 import * as $ from "jquery";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import {
-  ArrowCircleLeft,
-  Smiley, Note
-} from "@phosphor-icons/react";
+import { ArrowCircleLeft, Smiley, Note } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
@@ -76,7 +73,7 @@ function StockTransferPreview({ authrztn }) {
           params: {
             id: id,
             userId: userId,
-            remarks: rejectRemarks
+            remarks: rejectRemarks,
           },
         })
         .then((res) => {
@@ -135,7 +132,6 @@ function StockTransferPreview({ authrztn }) {
       .catch((err) => console.log(err));
   };
 
-
   const handleApproveClick = () => {
     swal({
       title: "Are you sure?",
@@ -151,7 +147,7 @@ function StockTransferPreview({ authrztn }) {
               params: {
                 id: id,
                 userId: userId,
-                remarks: remarks
+                remarks: remarks,
               },
             })
             .then((res) => {
@@ -176,7 +172,7 @@ function StockTransferPreview({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } 
+      }
     });
   };
 
@@ -216,8 +212,6 @@ function StockTransferPreview({ authrztn }) {
     }
   };
 
-
-  
   // const handleRejectClick = () => {
   //   swal({
   //     title: "Are you sure?",
@@ -265,16 +259,16 @@ function StockTransferPreview({ authrztn }) {
   const handleUploadRejustify = async () => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
       formData.append("remarks", rejustifyRemarks);
       formData.append("id", id);
       formData.append("userId", userId);
 
       const mimeType = file.type;
-      const fileExtension = file.name.split('.').pop();
+      const fileExtension = file.name.split(".").pop();
 
-      formData.append('mimeType', mimeType);
-      formData.append('fileExtension', fileExtension);
+      formData.append("mimeType", mimeType);
+      formData.append("fileExtension", fileExtension);
 
       const response = await axios.post(
         BASE_URL + `/StockTransfer/rejustifystock`,
@@ -309,7 +303,6 @@ function StockTransferPreview({ authrztn }) {
     }
   };
 
-
   const [prodFetch, setProdFetch] = useState([]);
 
   useEffect(() => {
@@ -322,11 +315,9 @@ function StockTransferPreview({ authrztn }) {
       .then((res) => {
         const data = res.data;
         setProdFetch(data.product_db);
-
       })
       .catch((err) => console.log(err));
   }, [id]);
-
 
   const [showModal, setShowModal] = useState(false);
 
@@ -362,6 +353,27 @@ function StockTransferPreview({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
+  const handleFormChangeMasterList = (event) => {
+    setReceivedBy(event.target.value);
+  };
+  const [masterList, setMasteList] = useState([]);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/masterList/masterTable")
+        .then((response) => {
+          setMasteList(response.data);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching master list:", error);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, []);
   // const update = async (e) => {
   //   e.preventDefault();
 
@@ -410,7 +422,7 @@ function StockTransferPreview({ authrztn }) {
   //   }
   //   setValidated(true); //for validations
   // };
-
+  const [dateTransfers, setDateTransfers] = useState("");
   useEffect(() => {
     axios
       .get(BASE_URL + "/StockTransfer/fetchView", {
@@ -423,6 +435,7 @@ function StockTransferPreview({ authrztn }) {
         setReceivedBy(res.data[0].col_id);
         setRemarks(res.data[0].remarks);
         setStatus(res.data[0].status);
+        setDateTransfers(res.data[0].date_transfer);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -450,10 +463,7 @@ function StockTransferPreview({ authrztn }) {
   }, [id]);
 
   useEffect(() => {
-    if (
-      $("#order-listing").length > 0 &&
-      prodFetch.length > 0 
-    ) {
+    if ($("#order-listing").length > 0 && prodFetch.length > 0) {
       $("#order-listing").DataTable();
     }
   }, [prodFetch]);
@@ -506,6 +516,43 @@ function StockTransferPreview({ authrztn }) {
                   transform: "translateY(-50%)",
                 }}
               ></span>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>Date: </Form.Label>
+                  <Form.Control
+                    required
+                    type="date"
+                    value={dateTransfers}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Received By:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    onChange={handleFormChangeMasterList}
+                    required
+                    disabled
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={receivedBy}
+                  >
+                    <option disabled value="">
+                      Select Employee
+                    </option>
+                    {masterList.map((masterList) => (
+                      <option key={masterList.col_id} value={masterList.col_id}>
+                        {masterList.col_Fname}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
             </div>
             <div className="row mt-3">
               <div className="col-4">
@@ -609,35 +656,30 @@ function StockTransferPreview({ authrztn }) {
                       <th className="tableh">U/M</th>
                     </tr>
                   </thead>
-                  {prodFetch.length > 0  ? (
+                  {prodFetch.length > 0 ? (
                     <tbody>
                       {prodFetch.map((data, i) => (
                         <tr key={i}>
-                          <td>
-                            {
-                              data.product.product_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.product.product_name
-                            }
-                          </td>
+                          <td>{data.product.product_code}</td>
+                          <td>{data.product.product_name}</td>
                           <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.product.product_unitMeasurement
-                            }
-                          </td>
+                          <td>{data.product.product_unitMeasurement}</td>
                         </tr>
                       ))}
-                      
                     </tbody>
                   ) : (
-                    <div className="no-data">
-                      <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>No Data Found</h3>
-                    </div>
+                    <tbody>
+                      <tr>
+                        <td colSpan="4" className="no-data">
+                          <img
+                            src={NoData}
+                            alt="NoData"
+                            className="no-data-img"
+                          />
+                          <h3>No Data Found</h3>
+                        </td>
+                      </tr>
+                    </tbody>
                   )}
                 </table>
               </div>
@@ -665,25 +707,20 @@ function StockTransferPreview({ authrztn }) {
                   >
                     Reject
                   </Button>
-
-                  
                 </>
               ) : (
-                <>
-                 
-                </>
+                <></>
               )}
               {status !== "Pending" && (
                 <Button
-                onClick={handleReject_history}
-                className="btn btn-secondary btn-md"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}
-              >
-                Reject History
-              </Button>
+                  onClick={handleReject_history}
+                  className="btn btn-secondary btn-md"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                >
+                  Reject History
+                </Button>
               )}
-             
             </div>
           </div>
         ) : (
@@ -695,361 +732,347 @@ function StockTransferPreview({ authrztn }) {
       </div>
 
       <Modal show={showModal} onHide={handleClose}>
-              <Form>
-                <Modal.Header closeButton>
-                  <Modal.Title style={{ fontSize: "24px" }}>
-                    For Rejustification
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <div className="row mt-3">
-                    <div className="col-12">
-                      <Form.Group controlId="exampleForm.ControlInput1">
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Reference
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          value={referenceCode}
-                          readOnly
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                      </Form.Group>
-                    </div>
-                    
-                    
-                  </div>
+        <Form>
+          <Modal.Header closeButton>
+            <Modal.Title style={{ fontSize: "24px" }}>
+              For Rejustification
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row mt-3">
+              <div className="col-12">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Reference
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={referenceCode}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
-                  <div className="row">
+            <div className="row">
+              <div className="col-6">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
+                >
+                  <Form.Label style={{ fontSize: "20px" }}>Source</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={source}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
 
-                  <div className="col-6">
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="datepick"
-                      >
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Source
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          value={source}
-                          readOnly
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                      </Form.Group>
-                    </div>
+              <div className="col-6">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
+                >
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Destination
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={destination}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
-                    <div className="col-6">
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="datepick"
-                      >
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Destination
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          value={destination}
-                          readOnly
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                      </Form.Group>
-                    </div>
-                  </div>
-
-                  <div className="row">
-                    <Form.Group controlId="exampleForm.ControlInput1">
-                      <Form.Label style={{ fontSize: "20px" }}>
-                        Remarks:{" "}
-                      </Form.Label>
-                      <Form.Control
-                        onChange={(e) => setRejustifyRemarks(e.target.value)}
-                        placeholder="Enter details"
-                        as="textarea"
-                        rows={3}
-                        style={{
-                        fontFamily: 'Poppins, Source Sans Pro',
-                        fontSize: "16px",
-                        height: "200px",
-                        maxHeight: "200px",
-                        resize: "none",
-                        overflowY: "auto",
-                        }}
-                      />
-                    </Form.Group>
-                    <div className="col-6">
-                      <Form.Group controlId="exampleForm.ControlInput1">
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Attach File:
-                        </Form.Label>
-                        <Form.Control type="file" onChange={handleFileChange} style={{width: '405px', height: '33px'}}/>
-                      </Form.Group>
-                    </div>
-                  </div>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => {
-                      setShowModal(false);
-                      setShowModal_remarks(true);
-                    }}
-                    style={{ fontSize: "20px" }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleUploadRejustify}
-                    variant="warning"
-                    size="md"
-                    style={{ fontSize: "20px" }}
-                  >
-                    Save
-                  </Button>
-                </Modal.Footer>
-              </Form>
+            <div className="row">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
+                <Form.Control
+                  onChange={(e) => setRejustifyRemarks(e.target.value)}
+                  placeholder="Enter details"
+                  as="textarea"
+                  rows={3}
+                  style={{
+                    fontFamily: "Poppins, Source Sans Pro",
+                    fontSize: "16px",
+                    height: "200px",
+                    maxHeight: "200px",
+                    resize: "none",
+                    overflowY: "auto",
+                  }}
+                />
+              </Form.Group>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Attach File:
+                  </Form.Label>
+                  <Form.Control
+                    type="file"
+                    onChange={handleFileChange}
+                    style={{ width: "405px", height: "33px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => {
+                setShowModal(false);
+                setShowModal_remarks(true);
+              }}
+              style={{ fontSize: "20px" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleUploadRejustify}
+              variant="warning"
+              size="md"
+              style={{ fontSize: "20px" }}
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
 
-
       <Modal show={showModal_reject} onHide={handleClose}>
-            <Form>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontSize: "24px" }}>
-                  Reject Form
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="row mt-3">
-                  <div className="col-12">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Reference
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          value={referenceCode}
-                          readOnly
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                      </Form.Group>
-                  </div>
-                 
-                </div>
+        <Form>
+          <Modal.Header closeButton>
+            <Modal.Title style={{ fontSize: "24px" }}>Reject Form</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row mt-3">
+              <div className="col-12">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Reference
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={referenceCode}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
-                <div className="row">
-
-<div className="col-6">
-    <Form.Group
-      controlId="exampleForm.ControlInput2"
-      className="datepick"
-    >
-      <Form.Label style={{ fontSize: "20px" }}>
-        Source
-      </Form.Label>
-      <Form.Control
-        type="text"
-        value={source}
-        readOnly
-        style={{ height: "40px", fontSize: "15px" }}
-      />
-    </Form.Group>
-  </div>
-
-  <div className="col-6">
-    <Form.Group
-      controlId="exampleForm.ControlInput2"
-      className="datepick"
-    >
-      <Form.Label style={{ fontSize: "20px" }}>
-        Destination
-      </Form.Label>
-      <Form.Control
-        type="text"
-        value={destination}
-        readOnly
-        style={{ height: "40px", fontSize: "15px" }}
-      />
-    </Form.Group>
-  </div>
-</div>
-
-                <div className="row">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Remarks:{" "}
-                    </Form.Label>
-
-                    <div style={{ position: "relative" }} className="">
-                      <Form.Control
-                        as="textarea"
-                        onChange={(e) => setRejectRemarks(e.target.value)}
-                        placeholder="Enter details"
-                        style={{
-                          height: "100px",
-                          fontSize: "15px",
-                          margin: 0,
-                          padding: 0,
-                        }}
-                        value={rejectRemarks}
-                      />
-
-                      <Button
-                        variant
-                        style={{
-                          position: "absolute",
-                          bottom: "3px",
-                          left: "3px",
-                        }}
-                        onClick={() => setIsPickerVisible(!isPickerVisible)}
-                        className="border border-radius"
-                      >
-                        <Smiley size={20} color="#161718" />
-                      </Button>
-                    </div>
-                  </Form.Group>
-
-                  {isPickerVisible === true ? (
-                    <>
-                      <Picker
-                        style={{ zIndex: 1 }}
-                        data={data}
-                        previewPosition="none"
-                        onEmojiSelect={(e) => {
-                          setRejectRemarks(
-                            (prevRemarks) => prevRemarks + e.native
-                          );
-                          setIsPickerVisible(!isPickerVisible);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={handleClose}
-                  style={{ fontSize: "20px" }}
+            <div className="row">
+              <div className="col-6">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleRejected}
-                  variant="warning"
-                  size="md"
-                  style={{ fontSize: "20px" }}
+                  <Form.Label style={{ fontSize: "20px" }}>Source</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={source}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+
+              <div className="col-6">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
                 >
-                  Save
-                </Button>
-              </Modal.Footer>
-            </Form>
-          </Modal>
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Destination
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={destination}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
-          <Modal
-            show={showModal_remarks}
-            onHide={handleClose}
-            backdrop="static"
-            keyboard={false}
-            size="xl"
-          >
-            <Form>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontSize: "24px" }}>
-                  Reject History
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                {rejustifyHistory.map((data, index) => (
-                  <React.Fragment key={index}>
-                    <span className="h2">{`${data.source} `}</span>
-                    <div className="d-flex w-100 border-bottom justify-content-center align-items-center">
-                      <Note size={55} className="mr-3" color="#066ff9" />
+            <div className="row">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
 
-                      <div className="w-50">
-                        <div
-                          className="d-flex flex-column float-start"
-                          style={{ maxWidth: "100%" }}
-                        >
-                          <span
-                            className="h3 w-100"
-                            style={{
-                              wordWrap: "break-word",
-                              overflowWrap: "break-word",
-                            }}
-                          >{`"${data.remarks}"`}</span>
-                          <span className="h4 text-muted">{`BY: ${data.masterlist.col_Fname}`}</span>
-                        </div>
-                      </div>
-
-                      <div className="w-50">
-                        <div className="d-flex flex-column float-end">
-                          <span className="h3">{`(${formatDatetime(
-                            data.createdAt
-                          )})`}</span>
-                          {data.source === "REJUSTIFICATION" &&
-                          data.file !== null ? (
-                            <>
-                              <Button
-                                onClick={() =>
-                                  handleDownloadFile(
-                                    data.file,
-                                    data.mimeType,
-                                    data.fileExtension
-                                  )
-                                }
-                                className="fs-5"
-                                variant="link"
-                              >
-                                Download
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <span className="h4 text-muted mt-2 text-end">{`No available file to download `}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <br />
-                  </React.Fragment>
-                ))}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={handleClose}
-                  style={{ fontSize: "20px" }}
-                >
-                  Cancel
-                </Button>
-
-                {status === "Rejected" ? (
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setShowModal(true);
-                      setShowModal_remarks(false);
+                <div style={{ position: "relative" }} className="">
+                  <Form.Control
+                    as="textarea"
+                    onChange={(e) => setRejectRemarks(e.target.value)}
+                    placeholder="Enter details"
+                    style={{
+                      height: "100px",
+                      fontSize: "15px",
+                      margin: 0,
+                      padding: 0,
                     }}
-                    variant="warning"
-                    size="md"
-                    style={{ fontSize: "20px" }}
+                    value={rejectRemarks}
+                  />
+
+                  <Button
+                    variant
+                    style={{
+                      position: "absolute",
+                      bottom: "3px",
+                      left: "3px",
+                    }}
+                    onClick={() => setIsPickerVisible(!isPickerVisible)}
+                    className="border border-radius"
                   >
-                    Rejustify
+                    <Smiley size={20} color="#161718" />
                   </Button>
-                ) : (
-                  <></>
-                )}
-              </Modal.Footer>
-            </Form>
-          </Modal>
+                </div>
+              </Form.Group>
+
+              {isPickerVisible === true ? (
+                <>
+                  <Picker
+                    style={{ zIndex: 1 }}
+                    data={data}
+                    previewPosition="none"
+                    onEmojiSelect={(e) => {
+                      setRejectRemarks((prevRemarks) => prevRemarks + e.native);
+                      setIsPickerVisible(!isPickerVisible);
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleClose}
+              style={{ fontSize: "20px" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleRejected}
+              variant="warning"
+              size="md"
+              style={{ fontSize: "20px" }}
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+
+      <Modal
+        show={showModal_remarks}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="xl"
+      >
+        <Form>
+          <Modal.Header closeButton>
+            <Modal.Title style={{ fontSize: "24px" }}>
+              Reject History
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {rejustifyHistory.map((data, index) => (
+              <React.Fragment key={index}>
+                <span className="h2">{`${data.source} `}</span>
+                <div className="d-flex w-100 border-bottom justify-content-center align-items-center">
+                  <Note size={55} className="mr-3" color="#066ff9" />
+
+                  <div className="w-50">
+                    <div
+                      className="d-flex flex-column float-start"
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <span
+                        className="h3 w-100"
+                        style={{
+                          wordWrap: "break-word",
+                          overflowWrap: "break-word",
+                        }}
+                      >{`"${data.remarks}"`}</span>
+                      <span className="h4 text-muted">{`BY: ${data.masterlist.col_Fname}`}</span>
+                    </div>
+                  </div>
+
+                  <div className="w-50">
+                    <div className="d-flex flex-column float-end">
+                      <span className="h3">{`(${formatDatetime(
+                        data.createdAt
+                      )})`}</span>
+                      {data.source === "REJUSTIFICATION" &&
+                      data.file !== null ? (
+                        <>
+                          <Button
+                            onClick={() =>
+                              handleDownloadFile(
+                                data.file,
+                                data.mimeType,
+                                data.fileExtension
+                              )
+                            }
+                            className="fs-5"
+                            variant="link"
+                          >
+                            Download
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <span className="h4 text-muted mt-2 text-end">{`No available file to download `}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <br />
+              </React.Fragment>
+            ))}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleClose}
+              style={{ fontSize: "20px" }}
+            >
+              Cancel
+            </Button>
+
+            {status === "Rejected" ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowModal(true);
+                  setShowModal_remarks(false);
+                }}
+                variant="warning"
+                size="md"
+                style={{ fontSize: "20px" }}
+              >
+                Rejustify
+              </Button>
+            ) : (
+              <></>
+            )}
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 }
