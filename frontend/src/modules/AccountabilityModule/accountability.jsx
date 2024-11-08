@@ -80,8 +80,10 @@ const Accountability = ({ authrztn }) => {
 
   const CloseAccountabilityModal = () => setShowAccountabilityModal(false);
 
-  const handleModalAccountability = (masterListId) => {
+  const [masterListName, setMasterListName] = useState("");
+  const handleModalAccountability = (masterListId, masterListName) => {
     setShowAccountabilityModal(true);
+    setMasterListName(masterListName);
     const ApprovedId = masterListId;
     axios
       .get(BASE_URL + "/accountability/fetchSpecificProduct", {
@@ -597,7 +599,10 @@ const Accountability = ({ authrztn }) => {
                           <td
                             onClick={() =>
                               handleModalAccountability(
-                                data.issued_approve_prd.issuance.receiver.col_id
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_id,
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_Fname
                               )
                             }
                           >
@@ -609,7 +614,10 @@ const Accountability = ({ authrztn }) => {
                           <td
                             onClick={() =>
                               handleModalAccountability(
-                                data.issued_approve_prd.issuance.receiver.col_id
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_id,
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_Fname
                               )
                             }
                           >
@@ -621,7 +629,10 @@ const Accountability = ({ authrztn }) => {
                           <td
                             onClick={() =>
                               handleModalAccountability(
-                                data.issued_approve_prd.issuance.receiver.col_id
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_id,
+                                data.issued_approve_prd.issuance.receiver
+                                  .col_Fname
                               )
                             }
                           >
@@ -727,7 +738,7 @@ const Accountability = ({ authrztn }) => {
         size="xl"
       >
         <Modal.Header closeButton>
-          <h1>Issued Product</h1>
+          <h1>{masterListName}</h1>
         </Modal.Header>
         <Modal.Body>
           <div className="main-of-all-tables">

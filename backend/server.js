@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const mailerConfig = require("./db/config/email_config");
 const frontendURL = mailerConfig.frontendURL;
-const port = 3306;
+const port = 8083;
 
 require("dotenv").config();
 
