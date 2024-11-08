@@ -6,6 +6,7 @@ const app = express();
 const mailerConfig = require("./db/config/email_config");
 const frontendURL = mailerConfig.frontendURL;
 const port = 3306;
+const fs = require("fs");
 
 //for https start
 const https = require("https");
