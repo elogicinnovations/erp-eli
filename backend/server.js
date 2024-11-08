@@ -7,6 +7,32 @@ const mailerConfig = require("./db/config/email_config");
 const frontendURL = mailerConfig.frontendURL;
 const port = 3306;
 
+//for https start
+const https = require("https");
+const privateKey = fs.readFileSync("/var/lib/jelastic/keys/privkey.pem");
+const certificate = fs.readFileSync("/var/lib/jelastic/keys/fullchain.pem");
+const credentials = { key: privateKey, cert: certificate };
+
+const frontendPath = "/home/jelastic/ROOT/frontend/build";
+app.use(express.static(frontendPath));
+
+app.post("/mssg", function (req, res) {
+  console.log(req.body);
+
+  res.redirect("/");
+});
+
+// Create HTTPS server on port 3443
+https.createServer(credentials, app).listen(3000, function (req, res) {
+  console.log("Server stated at port 3000");
+});
+// Create HTTPS server on port 3443
+https.createServer(credentials, app).listen(port, function (req, res) {
+  console.log(`Server stated at port ${port}`);
+});
+
+// for https end
+
 require("dotenv").config();
 
 app.use(
@@ -221,6 +247,9 @@ app.use("/checker", Checker);
 app.use("/accountability", Accountability);
 app.use("/warehouses", Warehouse);
 app.use("/retain", Retain);
-app.listen(port, () => {
-  console.log(`listening to port ${port}`);
+// app.listen(port, () => {
+//   console.log(`listening to port ${port}`);
+// });
+app.get("*", (req, res) => {
+  res.sendFile(frontendPath + "/index.html");
 });

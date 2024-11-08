@@ -5,5 +5,5 @@ module.exports = {
   // email: "sbfmailer@gmail.com",
   // password: "uoetasnknsroxwnq",
 
-  frontendURL: "http://sbfpdrc.com:3000",
+  frontendURL: "https://sbfpdrc.com:3000",
 };

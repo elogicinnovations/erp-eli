@@ -64,11 +64,10 @@
     "zustand": "^4.5.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "export HTTPS=true SSL_CERT_FILE=/var/lib/jelastic/keys/fullchain.pem SSL_KEY_FILE=/var/lib/jelastic/keys/privkey.pem && HOST=sbfpdrc.com react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "prod": "npm run-script build && serve build"
+    "proxy": "https://sbfpdrc.com:3306",
+    "prod": "npm run build && serve -s build"
   },
   "eslintConfig": {
     "extends": [
